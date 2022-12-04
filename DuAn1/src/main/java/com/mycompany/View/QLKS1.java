@@ -18,6 +18,9 @@ import com.mycompany.Service.impl.ThongKeServiceImpl;
 import com.mycompany.Service.impl.ThongTinThuePhongImpl;
 import com.mycompany.ViewModels.ThongKeView;
 import java.awt.Color;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 
 import java.util.List;
@@ -26,6 +29,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
@@ -39,9 +49,10 @@ public class QLKS1 extends javax.swing.JFrame {
     private IPhongService phongService = new PhongServiceImpl();
     private DichVuService dichVuService = new DichVuImpl();
     private ThongKeService thongKeService = new ThongKeServiceImpl();
+    private List<ThongKeView> list;
     private DefaultTableModel dtm;
     private DefaultComboBoxModel dcm;
-
+    
 
     public QLKS1() {
         initComponents();
@@ -557,6 +568,7 @@ public class QLKS1 extends javax.swing.JFrame {
         jLabel37 = new javax.swing.JLabel();
         jLabel84 = new javax.swing.JLabel();
         jLabel85 = new javax.swing.JLabel();
+        btnExcel = new javax.swing.JButton();
         jToolBar2 = new javax.swing.JToolBar();
         jLabel1 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
@@ -3144,6 +3156,13 @@ public class QLKS1 extends javax.swing.JFrame {
 
         jLabel85.setText("Năm");
 
+        btnExcel.setText("Xuất Excel");
+        btnExcel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcelActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -3168,6 +3187,8 @@ public class QLKS1 extends javax.swing.JFrame {
                         .addComponent(cbbNam, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(125, 125, 125)
                         .addComponent(btnThongKe, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(84, 84, 84)
+                        .addComponent(btnExcel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -3200,7 +3221,8 @@ public class QLKS1 extends javax.swing.JFrame {
                     .addComponent(cbbNam, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(jLabel37)
                     .addComponent(jLabel84)
-                    .addComponent(jLabel85))
+                    .addComponent(jLabel85)
+                    .addComponent(btnExcel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 380, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -3662,7 +3684,7 @@ public class QLKS1 extends javax.swing.JFrame {
         String year = cbbNam.getSelectedItem().toString();
         if (!date.equals("") && !month.equals("")) {
             String dateTime = year+"-"+month+"-"+date;
-            List<ThongKeView> list = thongKeService.queryByDay(dateTime);
+            list = thongKeService.queryByDay(dateTime);
             float tongTien = 0.0f;
             int soHD = 0;
             for (ThongKeView tk: list) {
@@ -3683,7 +3705,7 @@ public class QLKS1 extends javax.swing.JFrame {
             showThongKe(list);
         } else {
             if (date.equals("") && !month.equals("")) {
-                List<ThongKeView> list = thongKeService.queryByMonth(month, year);
+                list = thongKeService.queryByMonth(month, year);
                 float tongTien = 0.0f;
                 int soHD = 0;
                 for (ThongKeView tk: list) {
@@ -3705,7 +3727,7 @@ public class QLKS1 extends javax.swing.JFrame {
                 showThongKe(list);
             }
             if (month.equals("")) {
-                List<ThongKeView> list = thongKeService.queryByYear(year);
+                list = thongKeService.queryByYear(year);
                 float tongTien = 0.0f;
                 int soHD = 0;
                 for (ThongKeView tk: list) {
@@ -3728,6 +3750,57 @@ public class QLKS1 extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_btnThongKeActionPerformed
+
+    private void btnExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcelActionPerformed
+        Workbook workbook = new XSSFWorkbook();
+
+        Sheet sheet = workbook.createSheet("Persons");
+        sheet.setColumnWidth(0, 6000);
+        sheet.setColumnWidth(1, 4000);
+
+        Row header = sheet.createRow(0);
+
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+
+
+        Cell headerCell = header.createCell(0);
+        headerCell.setCellValue("Ngày");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(1);
+        headerCell.setCellValue("Số hóa đơn");
+        headerCell.setCellStyle(headerStyle);
+        
+        headerCell = header.createCell(2);
+        headerCell.setCellValue("Tổng thanh toán");
+        headerCell.setCellStyle(headerStyle);
+        for (int i = 0; i < list.size(); i ++) {
+            CellStyle style = workbook.createCellStyle();
+            style.setWrapText(true);
+
+            Row row = sheet.createRow(1+i);
+            Cell cell = row.createCell(0);
+            cell.setCellValue(list.get(i).getNgay());
+            cell.setCellStyle(style);
+
+            cell = row.createCell(1);
+            cell.setCellValue(list.get(i).getSoHoaDon());
+            cell.setCellStyle(style);
+            cell = row.createCell(2);
+            cell.setCellValue(list.get(i).getTongTien());
+            cell.setCellStyle(style);
+        }
+
+        String fileLocation = "D:\\temp.xlsx";
+        try {
+            FileOutputStream outputStream = new FileOutputStream(fileLocation);
+            workbook.write(outputStream);
+            workbook.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btnExcelActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -3770,6 +3843,7 @@ public class QLKS1 extends javax.swing.JFrame {
     private javax.swing.JFrame ThanhToan;
     private javax.swing.JButton btnCheckIn1;
     private javax.swing.JButton btnCheckIn2;
+    private javax.swing.JButton btnExcel;
     private javax.swing.JButton btnSuaDV;
     private javax.swing.JButton btnThem;
     private javax.swing.JButton btnThemDV;

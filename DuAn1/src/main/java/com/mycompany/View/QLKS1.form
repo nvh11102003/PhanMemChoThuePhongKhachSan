@@ -3953,6 +3953,8 @@
                                       <Component id="cbbNam" min="-2" pref="61" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" pref="125" max="-2" attributes="0"/>
                                       <Component id="btnThongKe" min="-2" pref="108" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="84" max="-2" attributes="0"/>
+                                      <Component id="btnExcel" min="-2" pref="100" max="-2" attributes="0"/>
                                       <EmptySpace max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="102" attributes="0">
@@ -3994,6 +3996,7 @@
                                   <Component id="jLabel37" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel84" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel85" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="btnExcel" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="jScrollPane6" min="-2" pref="380" max="-2" attributes="0"/>
@@ -4433,6 +4436,14 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="N&#x103;m"/>
                       </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="btnExcel">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Xu&#x1ea5;t Excel"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnExcelActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
